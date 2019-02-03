@@ -1,4 +1,4 @@
-import React,  { Component } from 'react';
+import React, { Component } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { withRouter, Link } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,17 +8,18 @@ import Grid from '@material-ui/core/Grid';
 import Slider from '@material-ui/lab/Slider';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
-import SimpleLineChart from './SimpleLineChart';
-import Months from './common/Months';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
-import Loading from './common/Loading';
+import SimpleLineChart from '../common/SimpleLineChart';
+import Months from '../common/Months';
+import Loading from '../common/Loading';
 
-import Topbar from './Topbar';
+import Topbar from '../common/Topbar';
 
 const numeral = require('numeral');
+
 numeral.defaultFormat('0,000');
 
-const backgroundShape = require('../images/shape.svg');
+const backgroundShape = require('../../images/shape.svg');
 
 const styles = theme => ({
   root: {
@@ -112,36 +113,35 @@ const styles = theme => ({
 const monthRange = Months;
 
 class Dashboard extends Component {
-
   state = {
     loading: true,
     amount: 15000,
     period: 3,
     start: 0,
     monthlyInterest: 0,
-    totalInterest: 0,
-    monthlyPayment: 0,
     totalPayment: 0,
     data: []
   };
 
   updateValues() {
     const { amount, period, start } = this.state;
-    const monthlyInterest = (amount)*(Math.pow(0.01*(1.01), period))/(Math.pow(0.01, period - 1))
+    const monthlyInterest = (amount) * (Math.pow(0.01 * (1.01), period)) / (Math.pow(0.01, period - 1));
     const totalInterest = monthlyInterest * (period + start);
     const totalPayment = amount + totalInterest;
-    const monthlyPayment = period > start ? totalPayment/(period - start) : totalPayment/(period)
+    const monthlyPayment = period > start ? totalPayment / (period - start) : totalPayment / (period);
 
-    const data = Array.from({length: period + start}, (value, i) => {
+    const data = Array.from({ length: period + start }, (value, i) => {
       const delayed = i < start;
       return {
         name: monthRange[i],
-        'Type': delayed ? 0 : Math.ceil(monthlyPayment).toFixed(0),
-        'OtherType': Math.ceil(monthlyInterest).toFixed(0)
-      }
-    })
+        Type: delayed ? 0 : Math.ceil(monthlyPayment).toFixed(0),
+        OtherType: Math.ceil(monthlyInterest).toFixed(0)
+      };
+    });
 
-    this.setState({monthlyInterest, totalInterest, totalPayment, monthlyPayment, data})
+    this.setState({
+      monthlyInterest, totalInterest, totalPayment, monthlyPayment, data
+    });
   }
 
   componentDidMount() {
@@ -149,32 +149,34 @@ class Dashboard extends Component {
   }
 
   handleChangeAmount = (event, value) => {
-    this.setState({amount: value, loading: false});
+    this.setState({ amount: value, loading: false });
     this.updateValues();
   }
 
   handleChangePeriod = (event, value) => {
-    this.setState({period: value, loading: false});
+    this.setState({ period: value, loading: false });
     this.updateValues();
   }
 
   handleChangeStart = (event, value) => {
-    this.setState({start: value, loading: false});
+    this.setState({ start: value, loading: false });
     this.updateValues();
   }
 
   render() {
     const { classes } = this.props;
-    const { amount, period, start, monthlyPayment,
-      monthlyInterest, data, loading } = this.state;
-    const currentPath = this.props.location.pathname
+    const {
+      amount, period, start, monthlyPayment,
+      monthlyInterest, data, loading
+    } = this.state;
+    const currentPath = this.props.location.pathname;
 
     return (
       <React.Fragment>
         <CssBaseline />
         <Topbar currentPath={currentPath} />
         <div className={classes.root}>
-          <Grid container justify="center"> 
+          <Grid container justify="center">
             <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
               <Grid item xs={12}>
                 <div className={classes.topBar}>
@@ -201,8 +203,10 @@ class Dashboard extends Component {
                       Use slider to set the amount you need.
                     </Typography>
                     <div className={classes.blockCenter}>
-                      <Typography color='secondary' variant="h6" gutterBottom>
-                        {numeral(amount).format()} USD
+                      <Typography color="secondary" variant="h6" gutterBottom>
+                        {numeral(amount).format()}
+                        {' '}
+USD
                       </Typography>
                     </div>
                     <div>
@@ -223,7 +227,7 @@ class Dashboard extends Component {
                       <div>
                         <Typography variant="subtitle2">
                           150,000 USD
-                        </Typography> 
+                        </Typography>
                       </div>
                     </div>
                   </div>
@@ -239,8 +243,10 @@ class Dashboard extends Component {
                       A sample period
                     </Typography>
                     <div className={classes.blockCenter}>
-                      <Typography color='secondary' variant="h6" gutterBottom>
-                        {period} months
+                      <Typography color="secondary" variant="h6" gutterBottom>
+                        {period}
+                        {' '}
+months
                       </Typography>
                     </div>
                     <div>
@@ -261,7 +267,7 @@ class Dashboard extends Component {
                       <div>
                         <Typography variant="subtitle2">
                           6 months
-                        </Typography> 
+                        </Typography>
                       </div>
                     </div>
                   </div>
@@ -277,7 +283,7 @@ class Dashboard extends Component {
                       Set your preferred start date.
                     </Typography>
                     <div className={classes.blockCenter}>
-                      <Typography color='secondary' variant="h6" gutterBottom>
+                      <Typography color="secondary" variant="h6" gutterBottom>
                         {monthRange[start]}
                       </Typography>
                     </div>
@@ -299,15 +305,15 @@ class Dashboard extends Component {
                       <div>
                         <Typography variant="subtitle2">
                           May 2019
-                        </Typography> 
+                        </Typography>
                       </div>
                     </div>
                   </div>
                 </Paper>
               </Grid>
               <Grid container spacing={24} justify="center">
-                <Grid item xs={12} md={8} >
-                  <Paper className={classes.paper} style={{position: 'relative'}}>
+                <Grid item xs={12} md={8}>
+                  <Paper className={classes.paper} style={{ position: 'relative' }}>
                     <Loading loading={loading} />
                     <div className={loading ? classes.loadingState : ''}>
                       <Typography variant="subtitle1" gutterBottom>
@@ -316,54 +322,58 @@ class Dashboard extends Component {
                       <Typography variant="body2">
                         Details about the graph
                       </Typography>
-                      <div style={{marginTop: 14, marginBottom: 14}}>
+                      <div style={{ marginTop: 14, marginBottom: 14 }}>
                         <div className={classes.inlining}>
-                          <Avatar className={classes.loanAvatar}></Avatar>
+                          <Avatar className={classes.loanAvatar} />
                           <Typography className={classes.inlining} variant="subtitle2" gutterBottom>
                             Type
                           </Typography>
-                          <Typography className={classes.inlining} color='secondary' variant="h6" gutterBottom>
-                            {numeral(monthlyPayment).format()} units
+                          <Typography className={classes.inlining} color="secondary" variant="h6" gutterBottom>
+                            {numeral(monthlyPayment).format()}
+                            {' '}
+units
                           </Typography>
                         </div>
                         <div className={classes.inlining}>
-                          <Avatar className={classes.interestAvatar}></Avatar>
+                          <Avatar className={classes.interestAvatar} />
                           <Typography className={classes.inlining} variant="subtitle2" gutterBottom>
                             Othe type
                           </Typography>
                           <Typography className={classes.inlining} color="secondary" variant="h6" gutterBottom>
-                            {numeral(monthlyInterest).format()} units
+                            {numeral(monthlyInterest).format()}
+                            {' '}
+units
                           </Typography>
                         </div>
                       </div>
-                      <div >
+                      <div>
                         <SimpleLineChart data={data} />
                       </div>
                     </div>
                   </Paper>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Paper className={classes.paper} style={{position: 'relative'}}>
-                  <Loading loading={loading} />
-                  <div className={loading ? classes.loadingState : ''}>
-                    <Typography variant="subtitle1" gutterBottom>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <Paper className={classes.paper} style={{ position: 'relative' }}>
+                    <Loading loading={loading} />
+                    <div className={loading ? classes.loadingState : ''}>
+                      <Typography variant="subtitle1" gutterBottom>
                       State
-                    </Typography>
-                    <div className={classes.mainBadge}>
-                      <VerifiedUserIcon style={{fontSize: 72}} fontSize={'large'} color={'secondary'} />
-                      <Typography variant="headline" color={'secondary'} gutterBottom>
-                        Verified
                       </Typography>
-                    </div>
-                    <div className={classes.buttonBar}>
-                      <Button to={{ pathname: "/dashboard", search: `?type=save` }} component={Link} variant="outlined" className={classes.actionButtom}>
+                      <div className={classes.mainBadge}>
+                        <VerifiedUserIcon style={{ fontSize: 72 }} fontSize="large" color="secondary" />
+                        <Typography variant="headline" color="secondary" gutterBottom>
+                        Verified
+                        </Typography>
+                      </div>
+                      <div className={classes.buttonBar}>
+                        <Button to={{ pathname: '/dashboard', search: '?type=save' }} component={Link} variant="outlined" className={classes.actionButtom}>
                         Save
-                      </Button>
-                      <Button to={{ pathname: "/dashboard", search: `?type=apply` }} component={Link} color='primary' variant="contained" className={classes.actionButtom}>
+                        </Button>
+                        <Button to={{ pathname: '/dashboard', search: '?type=apply' }} component={Link} color="primary" variant="contained" className={classes.actionButtom}>
                         Apply
-                      </Button>
+                        </Button>
+                      </div>
                     </div>
-                  </div>
                   </Paper>
                 </Grid>
               </Grid>
@@ -371,7 +381,7 @@ class Dashboard extends Component {
           </Grid>
         </div>
       </React.Fragment>
-    )
+    );
   }
 }
 

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import 'carbon-components/css/carbon-components.css';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import Routes from './routes'
 import './app.css';
-import { blue, indigo } from '@material-ui/core/colors'
+import { blue, indigo } from '@material-ui/core/colors';
+import Routes from './routes';
 
 const theme = createMuiTheme({
   palette: {
@@ -24,18 +24,18 @@ const theme = createMuiTheme({
   }
 });
 
-export default class App extends Component {
-
+class App extends Component {
   render() {
-
     return (
       <body>
-      <div>
-        <MuiThemeProvider theme={theme}>
-          <Routes />
-        </MuiThemeProvider>
-      </div>
+        <div>
+          <MuiThemeProvider theme={theme}>
+            <Routes />
+          </MuiThemeProvider>
+        </div>
       </body>
     );
   }
 }
+
+export default App;
