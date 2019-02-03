@@ -11,6 +11,7 @@ import { Tab } from 'carbon-components-react';
 import { Tabs } from 'carbon-components-react';
 import Topbar from '../common/Topbar';
 import DataTableEE from '../common/DataTableEE';
+import DataTableChildren from '../common/DataTableChildren';
 
 const backgroundShape = require('../../images/shape.svg');
 
@@ -39,42 +40,20 @@ const styles = theme => ({
 });
 
 class Main extends Component {
-  state = {
-    learnMoredialog: false,
-    getStartedDialog: false
-  };
-
-  componentDidMount() {}
-
-  openDialog = (event) => {
-    this.setState({ learnMoredialog: true });
-  }
-
-  dialogClose = (event) => {
-    this.setState({ learnMoredialog: false });
-  }
-
-  openGetStartedDialog = (event) => {
-    this.setState({ getStartedDialog: true });
-  }
-
-  closeGetStartedDialog = (event) => {
-    this.setState({ getStartedDialog: false });
-  }
-
   render() {
     const { classes } = this.props;
     return (
       <React.Fragment>
         <CssBaseline />
         <Topbar />
+        Welcome Banner
         <Tabs>
           <Tab label="Tab label 1">
             <div className={classes.root}>
               <Grid container justify="center">
                 <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
                   <Grid item>
-                    <DataTableEE />
+                    <DataTableChildren />
                   </Grid>
                 </Grid>
               </Grid>
