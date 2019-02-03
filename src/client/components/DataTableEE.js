@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import 'carbon-components/css/carbon-components.css';
 import { DataTable } from "carbon-components-react";
-const { Table, TableHead, TableHeader, TableBody, TableCell } = DataTable;
+const { Table, TableHead, TableHeader, TableBody, TableCell, TableContainer, TableRow } = DataTable;
     
 // Given that we have the following rows with the fields `foo`, `bar`, and `baz`
 

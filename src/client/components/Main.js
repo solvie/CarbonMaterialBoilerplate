@@ -5,9 +5,12 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-
+import 'carbon-components/css/carbon-components.css';
+import { Button } from 'carbon-components-react';
+import { Tab } from 'carbon-components-react';
+import { Tabs } from 'carbon-components-react';
 import Topbar from './Topbar';
+import DataTableEE from './DataTableEE';
 
 const backgroundShape = require('../images/shape.svg');
 
@@ -47,11 +50,6 @@ const styles = theme => ({
   outlinedButtom: {
     textTransform: 'uppercase',
     margin: theme.spacing.unit
-  },
-  actionButtom: {
-    textTransform: 'uppercase',
-    margin: theme.spacing.unit,
-    width: 152
   },
   blockCenter: {
     padding: theme.spacing.unit * 2,
@@ -119,62 +117,14 @@ class Main extends Component {
       <React.Fragment>
         <CssBaseline />
         <Topbar />
+        <Tabs>
+      <Tab label="Tab label 1">
+        Content for first tab goes here.
         <div className={classes.root}>
           <Grid container justify="center"> 
             <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
-              <Grid item xs={12} md={4}>
-                <Paper className={classes.paper}>
-                  <div className={classes.box}>
-                    <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                      First title
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                      A first title style <br/> with two lines
-                    </Typography>
-                  </div>
-                  <div style={{display: 'flex', justifyContent: 'flex-end'}}>                          
-                    <Button color='primary' variant="contained" className={classes.actionButtom}>
-                      Learn more
-                    </Button>
-                  </div>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Paper className={classes.paper}>
-                  <div className={classes.box}>
-                    <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                      Another box
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                      A default box
-                    </Typography>
-                  </div>
-                  <div style={{display: 'flex', justifyContent: 'flex-end'}}>                          
-                    <Button color='primary' variant="contained" className={classes.actionButtom}>
-                      Learn more
-                    </Button>
-                  </div>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Paper className={classes.paper}>
-                  <div className={classes.box}>
-                    <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                      A box with a carousel
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                      If you click in Getting Started, you will see a nice carousel
-                    </Typography>
-                  </div>
-                  <div className={classes.alignRight}>
-                    <Button onClick={this.openDialog}  variant="outlined" className={classes.actionButtom}>
-                      Learn more
-                    </Button>                          
-                    <Button onClick={this.openGetStartedDialog} color='primary' variant="contained" className={classes.actionButtom}>
-                      Dashboard
-                    </Button>
-                  </div>
-                </Paper>
+              <Grid item>
+                <DataTableEE></DataTableEE>
               </Grid>
               <Grid container item xs={12}>
                   <Grid item xs={12}>
@@ -199,7 +149,12 @@ class Main extends Component {
               </Grid>
             </Grid>
           </Grid>
-        </div>
+        </div>           </Tab>
+      <Tab label="Tab label 2">
+        <div>Content for second tab goes here.</div>
+      </Tab>
+   </Tabs> 
+        
       </React.Fragment>
     )
   }
