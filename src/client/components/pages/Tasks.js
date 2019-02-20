@@ -92,7 +92,10 @@ class Tasks extends Component {
 
 	    // Begin accessing JSON data here
 	    TasksList = JSON.parse(request.response);
-        this.setState({
+      TasksList.forEach(function(element, index, array) {
+        array[index].dateCreated = array[index].dateCreated.substring(0,10)
+      });
+      this.setState({
         rows: TasksList//fetch values from backend
       });
 	    if (request.status >= 200 && request.status < 400) {

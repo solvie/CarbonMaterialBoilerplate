@@ -85,9 +85,15 @@ class Children extends Component {
 
 	  // Begin accessing JSON data here
 	  ChildList = JSON.parse(request.response);
-      this.setState({
-        rows: ChildList//fetch values from backend
-      });
+
+    ChildList.forEach(function(element, index, array) {
+      array[index].dateJoined = array[index].dateJoined.substring(0,10)
+      array[index].dateOfBirth = array[index].dateOfBirth.substring(0,10)
+    });
+
+    this.setState({
+      rows: ChildList
+    });
 	  if (request.status >= 200 && request.status < 400) {
 	    ChildList.forEach(child => {
 	      console.log(child.fullName);
