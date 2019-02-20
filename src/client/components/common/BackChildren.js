@@ -31,4 +31,4 @@ class BackChildren extends Component {
   }
 }
 
-export default withRouter(withStyles(styles)(Back));
+export default withRouter(withStyles(styles)(BackChildren));

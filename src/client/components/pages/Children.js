@@ -5,6 +5,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Topbar from '../common/Topbar';
 import { DataTable } from 'carbon-components-react';
+import { Button } from 'carbon-components-react';
 const {
   Table, TableHead, TableHeader, TableBody, TableCell, TableContainer, TableRow
 } = DataTable;
@@ -115,6 +116,9 @@ class Children extends Component {
         <div className={classes.root}>
           <Grid container justify="center">
             <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
+            <Link className={classes.link} to={{ pathname: "/children/new" }}>
+                <Button>Add Child</Button>
+            </Link>
             <DataTable
               rows={rows}
               headers={headers}

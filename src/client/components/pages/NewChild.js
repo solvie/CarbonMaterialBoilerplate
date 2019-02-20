@@ -3,7 +3,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { withRouter } from 'react-router-dom'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
-import Back from '../common/Back';
+import BackChildren from '../common/BackChildren';
 import { Button } from 'carbon-components-react';
 import { Form } from 'carbon-components-react';
 import { Select, SelectItem } from 'carbon-components-react';
@@ -28,18 +28,35 @@ class NewChild extends Component {
     dateJoined: '',
     assignedLawyer: '',
 
+    children: [],
     users:[]
   }
 
   componentWillMount() {
     console.log("Enter componentWillMount");
     var Team;
+    var Children;
+
+    //--get children
+	  var request1 = new XMLHttpRequest();
+	  request1.open('GET', 'http://9.30.210.124:3000/api/Child', true);
+	  request1.onload = () => {
+	    Children = JSON.parse(request1.response);
+	    this.setState({
+	      children : Children
+	    });
+	    if (request1.status != 200) {
+	  	  console.log('error');
+	    }
+	  }
+	  request1.send();
 
     //--get team
     var request2 = new XMLHttpRequest();
     request2.open('GET', 'http://9.30.210.124:3000/api/User', true);
     request2.onload =  () => {
       Team = JSON.parse(request2.response);
+      console.log(Team)
       this.setState({
         users : Team
       });
@@ -48,15 +65,27 @@ class NewChild extends Component {
       }
     }
     request2.send();
+
   }
 
   handleSubmit = event => {
     //submit it into the thing.
-    this.packageTask();
+    console.log("NEW ID:" + this.generateChildId())
+    this.packageChild();
   }
 
   handleChange = event => {
     this.setState({ [event.target.id]: event.target.value});
+  }
+
+  handleDateChangeDob = event => {
+    console.log(event[0].toISOString())
+    this.setState({ dateOfBirth: event[0].toISOString()})
+  }
+
+  handleDateChangeJoined = event => {
+    console.log(event[0].toISOString())
+    this.setState({ dateJoined: event[0].toISOString()})
   }
 
   formatKeyVal(key, val){
@@ -67,16 +96,10 @@ class NewChild extends Component {
     return `${name}, ${role}`;
   }
 
-  componentDidMount() {
-    this.setState({
-
-    });
-  }
-
-  generateTaskId(){
+  generateChildId(){
     var highest=0;
-    this.state.tasks.forEach( task =>{
-      if (task.id>highest) highest = parseInt(task.id)
+    this.state.children.forEach( child =>{
+      if (child.id>highest) highest = parseInt(child.id)
     });
     return highest+1;
   }
@@ -91,17 +114,20 @@ class NewChild extends Component {
     console.log('packageChild()')
 
     var newChild = {
-      fullName = this.state.fullName
-      dateOfBirth = this.state.dateOfBirth
-      location = this.state.location
-      dateJoined = this.state.dateJoined
-      assignedLawyerId = this.state.assignedLawyer.split('=>')[0];
-      assignedLawyerName = this.state.assignedLawyer.split('=>')[1];
+      id: this.generateChildId(),
+      fullName: this.state.fullName,
+      location: this.state.location,
+      // dateOfBirth: '2019-02-20T05:37:24.927Z',
+      // dateJoined: '2019-02-20T05:37:24.927Z',
+      dateOfBirth: this.state.dateOfBirth,
+      dateJoined: this.state.dateJoined,
+      assignedLawyerId: this.state.assignedLawyer.split('=>')[0],
+      assignedLawyerName: this.state.assignedLawyer.split('=>')[1]
     }
-    console.log ('newChild' + JSON.stringify(newChild))
+    console.log ('newChild:' + JSON.stringify(newChild))
 
     var request3 = new XMLHttpRequest();
-  	request3.open('POST', 'http://9.30.210.124:3000/api/Task', true);
+  	request3.open('POST', 'http://9.30.210.124:3000/api/Child', true);
   	request3.setRequestHeader('Content-Type','application/json');
   	request3.setRequestHeader('Accept', 'application/json');
 
@@ -110,7 +136,7 @@ class NewChild extends Component {
         alert('child Created Successfully!');
         console.log("my console output",request3.responseText);
       } else {
-        console.log("Failed! My console output",request3.responseText);
+        console.log("Failed! My console output:",request3.responseText);
       }
     }
     request3.send(JSON.stringify(newChild));
@@ -118,6 +144,7 @@ class NewChild extends Component {
 
   render() {
     const { classes } = this.props;
+    const { users } = this.state
     return (
       <React.Fragment>
         <CssBaseline />
@@ -125,25 +152,26 @@ class NewChild extends Component {
           <BackChildren />
           <Grid container justify="center">
           <Form onSubmit={this.handleSubmit}>
-            <TextInput id='childFullName' labelText="Child's Full Name" placeholder='Firstname Lastname' onChange={this.handleChange} required/>
+            <TextInput id='fullName' labelText="Child's Full Name" placeholder='Firstname Lastname' onChange={this.handleChange} required/>
             <br />
-            <DatePicker id='childDOB' datePickerType='single' dateFormat='m/d/Y'>
+            <DatePicker id='dateOfBirth' datePickerType='single' dateFormat='m/d/Y' onChange={this.handleDateChangeDob}>
                     <DatePickerInput labelText="Child's Date of Birth" placeholder='mm/dd/yyyy'/>
             </DatePicker>
             <br />
-            <TextInput id='childLocation' labelText="Location" placeholder='' onChange={this.handleChange} required/>
+            <TextInput id='location' labelText="Location" placeholder='' onChange={this.handleChange} required/>
             <br />
-            <DatePicker id='childJoined' datePickerType='single' dateFormat='m/d/Y'>
+            <DatePicker id='dateJoined'  datePickerType='single' dateFormat='m/d/Y' onChange={this.handleDateChangeJoined}>
                 <DatePickerInput labelText="Date Joined" placeholder='mm/dd/yyyy'/>
             </DatePicker>
             <br />
             <br />
-            <Select id='taskAssignee' labelText='Assignee' onChange={this.handleChange} required>
+            <Select id='assignedLawyer' labelText='Assignee' onChange={this.handleChange} required>
             <SelectItem value='' text=''/>
               {users.map(user => (
                 <SelectItem value={this.formatKeyVal(user.id, user.fullName)} text={this.formatNameRole(user.fullName,user.role)}/>
               ))
               }
+            </Select>
             <Button type="submit">
               Add Child
             </Button>
