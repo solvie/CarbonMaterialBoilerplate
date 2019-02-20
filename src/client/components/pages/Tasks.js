@@ -8,6 +8,7 @@ import { DataTable } from 'carbon-components-react';
 import { Button } from 'carbon-components-react';
 import { Modal } from 'carbon-components-react';
 import { TextArea } from 'carbon-components-react';
+import { Tag } from 'carbon-components-react';
 
 
 const {
@@ -52,13 +53,12 @@ const styles = theme => ({
   noBorder: {
     borderBottomStyle: 'hidden'
   }
+
 });
 
 class Tasks extends Component {
   state = {
-    rows : [ {
-      comments: "TESTTESTTEST"
-    }
+    rows : [
     ],
 
     headers : [
@@ -88,10 +88,9 @@ class Tasks extends Component {
       }
     ],
 
-    modal: {
-      open: false,
-      rowIdx: "0"
-    },
+
+    modalOpen: false,
+    modalIdx: "0",
 
     dummyRow: {
       id: "1" ,
@@ -120,6 +119,8 @@ class Tasks extends Component {
 	    TasksList = JSON.parse(request.response);
       TasksList.forEach(function(element, index, array) {
         array[index].dateCreated = array[index].dateCreated.substring(0,10)
+        array[index].open = true
+        array[index].status = 'Open'
       });
       this.setState({
         rows: TasksList//fetch values from backend
@@ -139,12 +140,19 @@ class Tasks extends Component {
 
     openModal = idx => {
       console.log(idx)
-      this.setState({ modal: { open:true, rowIdx: idx}})
-      console.log(this.state.rows[idx])
+      // this.setState({ modal: { open:true, rowIdx: idx}})
+      this.setState({ modalOpen:true, modalIdx: idx })
     }
 
     closeModal = event => {
-      this.setState({ modal: { open:false}})
+      this.setState({ modalOpen: false })
+    }
+
+    toggleOpen = event => {
+      let rows = [...this.state.rows]
+      rows[this.state.modalIdx].open = !rows[this.state.modalIdx].open
+      rows[this.state.modalIdx].status = (rows[this.state.modalIdx].open ? 'Open' : 'Closed')
+      this.setState({rows:rows})
     }
 
   render() {
@@ -153,24 +161,43 @@ class Tasks extends Component {
       rows, headers
     } = this.state;
     const currentPath = this.props.location.pathname;
-    const modalOpen = this.state.modal.open;
-    const modalRow = this.state.rows[this.state.modal.rowIdx] || this.state.dummyRow;
+    const modalOpen = this.state.modalOpen;
+    const modalRow = this.state.rows[this.state.modalIdx] || this.state.dummyRow;
 
     return (
       <React.Fragment>
         <CssBaseline />
         <Topbar currentPath={currentPath} />
         <div className={classes.root}>
-        <Modal open={modalOpen} onRequestClose={this.closeModal}>
-          <TextArea labelText='Details' disabled value={JSON.stringify(modalRow)}/>
+        <Modal modalHeading={modalRow.taskTitle} open={modalOpen} secondaryButtonText='Close' primaryButtonText={(modalRow.open ? 'Mark as Finished' : 'Re-Open Task')} onRequestClose={this.closeModal} onRequestSubmit={this.toggleOpen}>
+        <Tag type={(modalRow.open ? 'community' : 'beta')}><h6>{modalRow.status}</h6></Tag>
+          <br />
+          <br />
+          <h6>Assigned To</h6>
+          <p>{modalRow.assignedUserName}</p>
+          <br />
+          <h6>Child</h6>
+          <p>{modalRow.childFullName}</p>
+          <br />
+          <h6>Description</h6>
+          <p>{modalRow.description}</p>
+          <br />
+          <h6>Comments</h6>
+          <p>{modalRow.comments}</p>
+          <br />
+          <h6>Date Created</h6>
+          <p>{modalRow.dateCreated}</p>
+          <br />
+          <h6>Created By</h6>
+          <p>{modalRow.taskCreatedByUserName}</p>
+
         </Modal>
 
           <Grid container justify="center">
             <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
             <Link className={classes.link} to={{ pathname: "/tasks/new" }}>
-            <Button>Add task</Button>
-          </Link>
-          <Button onClick={this.openModal}>Open Modal</Button>
+              <Button>Add task</Button>
+            </Link>
             <DataTable
               rows={rows}
               headers={headers}
