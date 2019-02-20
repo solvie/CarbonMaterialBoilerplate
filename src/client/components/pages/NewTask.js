@@ -9,9 +9,7 @@ import { Form } from 'carbon-components-react';
 import { Select, SelectItem } from 'carbon-components-react';
 import { TextInput } from 'carbon-components-react';
 import { TextArea } from 'carbon-components-react';
-var Tasks = require('../jsons/tasks.json');
-var Team = require('../jsons/team.json');
-var Children = require('../jsons/children.json');
+
 
 const styles = theme => ({
   root: {
@@ -35,13 +33,63 @@ class NewTask extends Component {
     tasks:[]
   }
 
+  componentWillMount() {
+	  console.log("Enter componentWillMount");
+	  var Tasks;
+	  var Team;
+	  var Children;
+
+	  //--get tasks*/
+	  var request = new XMLHttpRequest();
+	  request.open('GET', 'http://9.30.210.124:3000/api/Task', true);
+	  request.onload = () => {
+	    Tasks= JSON.parse(request.response);
+	    this.setState({
+	      tasks : Tasks
+	    });
+	    if (request.status != 200) {
+	  	  console.log('error');
+	    }
+	  }
+
+	  request.send();
+
+	  //--get child
+	  var request1 = new XMLHttpRequest();
+	  request1.open('GET', 'http://9.30.210.124:3000/api/Child', true);
+	  request1.onload = () => {
+	    Children = JSON.parse(request1.response);
+	    this.setState({
+	      children : Children
+	    });
+	    if (request1.status != 200) {
+	  	  console.log('error');
+	    }
+	  }
+	  request1.send();
+	  //--get team
+	  var request2 = new XMLHttpRequest();
+	  request2.open('GET', 'http://9.30.210.124:3000/api/User', true);
+	  request2.onload =  () => {
+	    Team = JSON.parse(request2.response);
+	    this.setState({
+	      users : Team
+	    });
+	    if (request2.status != 200) {
+	  	  console.log('error');
+	    }
+	  }
+	  request2.send();
+
+  }
+
+
   handleSubmit = event => {
   //change current date
+	console.log("Enter Submit")
     console.log(this.state);
-    if (this.validateTask()){
-      //submit it into the thing.
-      this.packageTask();
-    }
+    this.packageTask();
+
   }
 
   handleChange = event => {
@@ -54,14 +102,6 @@ class NewTask extends Component {
 
   formatNameRole(name, role){
     return `${name}, ${role}`;
-  }
-
-  componentDidMount() {
-    this.setState({
-      users : Team, //fetch from actual backend
-      children : Children,
-      tasks : Tasks
-    });
   }
 
   generateTaskId(){
@@ -78,8 +118,10 @@ class NewTask extends Component {
     return `${date.getUTCDate()}/${month}/${date.getFullYear()}`;
   }
 
-  //checks
+  //checks, this function is not working
+  //skip it
   validateTask(){
+
     if (!this.childAssigned) return false;
     if (!this.taskCreator) return false;
     if (!this.taskAssignee) return false;
@@ -87,6 +129,7 @@ class NewTask extends Component {
   }
 
   packageTask(){
+	console.log("enter packageTask")
     var childIdParsed = this.state.childAssigned.split('=>')[0];
     var childNameParsed = this.state.childAssigned.split('=>')[1];
     var assignedUserIdParsed = this.state.taskAssignee.split('=>')[0];
@@ -94,22 +137,40 @@ class NewTask extends Component {
     var taskCreatorIdParsed = this.state.taskCreator.split('=>')[0];
     var taskCreatorNameParsed = this.state.taskCreator.split('=>')[1];
 
-    this.state.tasks.push(
-      {
+    console.log(this.state.tasks);
+	var request3 = new XMLHttpRequest();
+	request3.open('POST', 'http://9.30.210.124:3000/api/Task', true);
+	request3.setRequestHeader('Content-Type','application/json');
+	request3.setRequestHeader('Accept', 'application/json');
+
+	var newtask = {
         id: this.generateTaskId(),
-        childId: childIdParsed,
+        childId: childIdParsed.toString(),
         childFullName: childNameParsed,
-        assignedUserId: assignedUserIdParsed,
+        assignedUserId: assignedUserIdParsed.toString(),
         assignedUserName: assignedUserNameParsed,
         taskTitle: this.state.taskTitle,
         description: this.state.taskDetails,
-        comments: "",
-        dateCreated: this.getDate(),
-        taskCreatedByUserId: taskCreatorIdParsed,
+        comments: "TEST",
+        dateCreated: "2019-02-19T22:44:30.215Z",
+        taskCreatedByUserId: taskCreatorIdParsed.toString(),
         taskCreatedByUserName: taskCreatorNameParsed
-      }
-    )
-    console.log(this.state.tasks);
+      };
+
+
+	request3.onreadystatechange = function() {
+
+	     if(request3.readyState === 4 && request3.status === 200){
+			 alert('Task Created Successfully!');
+	     	console.log("my console output",request3.responseText);
+	     }
+		 else{
+			 console.log("Failed! My console output",request3.responseText);
+		 }
+
+	}
+	    request3.send(JSON.stringify(newtask));
+
   }
 
   render() {
@@ -119,7 +180,7 @@ class NewTask extends Component {
       <React.Fragment>
         <CssBaseline />
         <div className={classes.root}>
-          <Back pathname='/tasks/new'/>
+          <Back />
           <Grid container justify="center">
           <Form onSubmit={this.handleSubmit}>
             <TextInput id='taskTitle' labelText='Task Title' placeholder='something' onChange={this.handleChange} required/>
@@ -150,7 +211,7 @@ class NewTask extends Component {
             <br />
             <TextArea id='taskDetails' labelText='Details' placeholder='Enter details about this task' onChange={this.handleChange}/>
             <br />
-            <Button type="submit">
+            <Button type="button" onClick={() => (this.handleSubmit())}>
               Create Task
             </Button>
           </Form>
