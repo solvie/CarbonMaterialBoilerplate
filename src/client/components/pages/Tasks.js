@@ -9,7 +9,7 @@ import { Button } from 'carbon-components-react';
 const {
   Table, TableHead, TableHeader, TableBody, TableCell, TableContainer, TableRow
 } = DataTable;
-var TasksList = require('../jsons/tasks.json');
+
 
 // const backgroundShape = require('../../images/shape.svg');
 
@@ -83,17 +83,32 @@ class Tasks extends Component {
       }
     ]
   };
+  componentWillMount(){
+	  var TasksList;
 
+	  var request = new XMLHttpRequest();
+	  request.open('GET', 'http://9.30.210.124:3000/api/Task', true);
+	  request.onload = () =>{
 
-  updateValues() {
-    this.setState({
-      rows : TasksList //fetch from actual backend
-    });
+	    // Begin accessing JSON data here
+	    TasksList = JSON.parse(request.response);
+        this.setState({
+        rows: TasksList//fetch values from backend
+      });
+	    if (request.status >= 200 && request.status < 400) {
+	      TasksList.forEach(task => {
+	        console.log(task.id);
+	      });
+	    } else {
+	      console.log('error');
+	    }
+	  }
+
+	  // Send request
+	  request.send();
   }
 
-  componentDidMount() {
-    this.updateValues();
-  }
+
 
   render() {
     const { classes } = this.props;
@@ -110,8 +125,8 @@ class Tasks extends Component {
           <Grid container justify="center">
             <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
             <Link className={classes.link} to={{ pathname: "/tasks/new" }}>
-                <Button>Add task</Button>
-            </Link>
+            <Button>Add task</Button>
+          </Link>
             <DataTable
               rows={rows}
               headers={headers}

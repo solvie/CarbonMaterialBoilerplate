@@ -5,11 +5,9 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Topbar from '../common/Topbar';
 import { DataTable } from 'carbon-components-react';
-import { Button } from 'carbon-components-react';
 const {
   Table, TableHead, TableHeader, TableBody, TableCell, TableContainer, TableRow
 } = DataTable;
-var ChildList = require('../jsons/children.json');
 
 // const backgroundShape = require('../../images/shape.svg');
 
@@ -52,6 +50,7 @@ const styles = theme => ({
 });
 
 class Children extends Component {
+
   state = {
     rows : [ //initialize with examples
 
@@ -77,16 +76,30 @@ class Children extends Component {
     ]
   };
 
+  componentWillMount(){
+	var ChildList;
+	var request = new XMLHttpRequest();
+	request.open('GET', 'http://9.30.210.124:3000/api/Child', true);
+	request.onload = () => {
 
-  updateValues() {
-    this.setState({
-      rows: ChildList//fetch values from backend
-    });
-  }
+	  // Begin accessing JSON data here
+	  ChildList = JSON.parse(request.response);
+      this.setState({
+        rows: ChildList//fetch values from backend
+      });
+	  if (request.status >= 200 && request.status < 400) {
+	    ChildList.forEach(child => {
+	      console.log(child.fullName);
+	    });
+	  } else {
+	    console.log('error');
+	  }
+	}
 
-  componentDidMount() {
-    this.updateValues();
-  }
+	// Send request
+	request.send();
+
+ }
 
   render() {
     const { classes } = this.props;
@@ -102,9 +115,6 @@ class Children extends Component {
         <div className={classes.root}>
           <Grid container justify="center">
             <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
-            <Link className={classes.link} to={{ pathname: "/children/new" }}>
-                <Button>Add Child</Button>
-            </Link>
             <DataTable
               rows={rows}
               headers={headers}

@@ -8,7 +8,7 @@ import { DataTable } from 'carbon-components-react';
 const {
   Table, TableHead, TableHeader, TableBody, TableCell, TableContainer, TableRow
 } = DataTable;
-var TeamList = require('../jsons/team.json');
+
 const backgroundShape = require('../../images/shape.svg');
 
 const styles = theme => ({
@@ -53,7 +53,7 @@ class Team extends Component {
   state = {
     rows : [ //initialize with examples
     ],
-  
+
     headers : [
       {
         key: 'fullName',
@@ -65,16 +65,29 @@ class Team extends Component {
       }
     ]
   };
-  
 
-  updateValues() {
-    this.setState({
-      rows: TeamList//fetch values from backend
-    });
-  }
+  componentWillMount(){
+	  var TeamList;
+	  var request = new XMLHttpRequest();
 
-  componentDidMount() {
-    this.updateValues();
+	  request.open('GET', 'http://9.30.210.124:3000/api/User', true);
+	  request.onload = () => {
+
+
+	  TeamList = JSON.parse(request.response);
+      this.setState({
+        rows: TeamList//fetch values from backend
+      });
+	    if (request.status >= 200 && request.status < 400) {
+	      TeamList.forEach(user => {
+	        console.log(user.fullName);
+	      });
+	    } else {
+	      console.log('error');
+	    }
+	  }
+
+	  request.send();
   }
 
   render() {
@@ -119,7 +132,7 @@ class Team extends Component {
                   </Table>
                 </TableContainer>
               )}
-              /> 
+              />
             </Grid>
           </Grid>
         </div>
