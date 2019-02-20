@@ -10,9 +10,6 @@ import { Select, SelectItem } from 'carbon-components-react';
 import { TextInput } from 'carbon-components-react';
 import { TextArea } from 'carbon-components-react';
 import { DatePicker, DatePickerInput } from 'carbon-components-react';
-var Tasks = require('../jsons/tasks.json');
-var Team = require('../jsons/team.json');
-var Children = require('../jsons/children.json');
 
 const styles = theme => ({
   root: {
@@ -25,19 +22,37 @@ const styles = theme => ({
 class NewChild extends Component {
 
   state = {
-    childFullName: '',
-    childDOB: '',
-    childLocation: '',
-    childDateJoined: ''
+    fullName: '',
+    dateOfBirth: '',
+    location: '',
+    dateJoined: '',
+    assignedLawyer: '',
+
+    users:[]
+  }
+
+  componentWillMount() {
+    console.log("Enter componentWillMount");
+    var Team;
+
+    //--get team
+    var request2 = new XMLHttpRequest();
+    request2.open('GET', 'http://9.30.210.124:3000/api/User', true);
+    request2.onload =  () => {
+      Team = JSON.parse(request2.response);
+      this.setState({
+        users : Team
+      });
+      if (request2.status != 200) {
+        console.log('error');
+      }
+    }
+    request2.send();
   }
 
   handleSubmit = event => {
-  //change current date
-    console.log(this.state);
-    if (this.validateChild()){
-      //submit it into the thing.
-      this.packageTask();
-    }
+    //submit it into the thing.
+    this.packageTask();
   }
 
   handleChange = event => {
@@ -72,38 +87,33 @@ class NewChild extends Component {
     return `${date.getUTCDate()}/${month}/${date.getFullYear()}`;
   }
 
-  //checks
-  validateChild(){
-    if (!this.childAssigned) return false;
-    if (!this.taskCreator) return false;
-    if (!this.taskAssignee) return false;
-    return true; //all is well
-  }
-
   packageChild(){
-    var childIdParsed = this.state.childAssigned.split('=>')[0];
-    var childNameParsed = this.state.childAssigned.split('=>')[1];
-    var assignedUserIdParsed = this.state.taskAssignee.split('=>')[0];
-    var assignedUserNameParsed = this.state.taskAssignee.split('=>')[1];
-    var taskCreatorIdParsed = this.state.taskCreator.split('=>')[0];
-    var taskCreatorNameParsed = this.state.taskCreator.split('=>')[1];
+    console.log('packageChild()')
 
-    this.state.tasks.push(
-      {
-        id: this.generateTaskId(),
-        childId: childIdParsed,
-        childFullName: childNameParsed,
-        assignedUserId: assignedUserIdParsed,
-        assignedUserName: assignedUserNameParsed,
-        taskTitle: this.state.taskTitle,
-        description: this.state.taskDetails,
-        comments: "",
-        dateCreated: this.getDate(),
-        taskCreatedByUserId: taskCreatorIdParsed,
-        taskCreatedByUserName: taskCreatorNameParsed
+    var newChild = {
+      fullName = this.state.fullName
+      dateOfBirth = this.state.dateOfBirth
+      location = this.state.location
+      dateJoined = this.state.dateJoined
+      assignedLawyerId = this.state.assignedLawyer.split('=>')[0];
+      assignedLawyerName = this.state.assignedLawyer.split('=>')[1];
+    }
+    console.log ('newChild' + JSON.stringify(newChild))
+
+    var request3 = new XMLHttpRequest();
+  	request3.open('POST', 'http://9.30.210.124:3000/api/Task', true);
+  	request3.setRequestHeader('Content-Type','application/json');
+  	request3.setRequestHeader('Accept', 'application/json');
+
+    request3.onreadystatechange = function() {
+      if(request3.readyState === 4 && request3.status === 200) {
+        alert('child Created Successfully!');
+        console.log("my console output",request3.responseText);
+      } else {
+        console.log("Failed! My console output",request3.responseText);
       }
-    )
-    console.log(this.state.tasks);
+    }
+    request3.send(JSON.stringify(newChild));
   }
 
   render() {
@@ -112,7 +122,7 @@ class NewChild extends Component {
       <React.Fragment>
         <CssBaseline />
         <div className={classes.root}>
-          <Back />
+          <BackChildren />
           <Grid container justify="center">
           <Form onSubmit={this.handleSubmit}>
             <TextInput id='childFullName' labelText="Child's Full Name" placeholder='Firstname Lastname' onChange={this.handleChange} required/>
@@ -127,6 +137,13 @@ class NewChild extends Component {
                 <DatePickerInput labelText="Date Joined" placeholder='mm/dd/yyyy'/>
             </DatePicker>
             <br />
+            <br />
+            <Select id='taskAssignee' labelText='Assignee' onChange={this.handleChange} required>
+            <SelectItem value='' text=''/>
+              {users.map(user => (
+                <SelectItem value={this.formatKeyVal(user.id, user.fullName)} text={this.formatNameRole(user.fullName,user.role)}/>
+              ))
+              }
             <Button type="submit">
               Add Child
             </Button>
