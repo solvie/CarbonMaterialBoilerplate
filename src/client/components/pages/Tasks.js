@@ -6,10 +6,13 @@ import Grid from '@material-ui/core/Grid';
 import Topbar from '../common/Topbar';
 import { DataTable } from 'carbon-components-react';
 import { Button } from 'carbon-components-react';
+import { Modal } from 'carbon-components-react';
+import { TextArea } from 'carbon-components-react';
+
+
 const {
   Table, TableHead, TableHeader, TableBody, TableCell, TableContainer, TableRow
 } = DataTable;
-
 
 // const backgroundShape = require('../../images/shape.svg');
 
@@ -53,7 +56,9 @@ const styles = theme => ({
 
 class Tasks extends Component {
   state = {
-    rows : [
+    rows : [ {
+      comments: "TESTTESTTEST"
+    }
     ],
 
     headers : [
@@ -81,7 +86,28 @@ class Tasks extends Component {
         key: 'dateCreated',
         header: 'Created'
       }
-    ]
+    ],
+
+    modal: {
+      open: false,
+      rowIdx: "0"
+    },
+
+    dummyRow: {
+      id: "1" ,
+      childId: "1",
+      childFullName: "Angela Cortez",
+      assignedUserId: "1",
+      assignedUserName: "Beatriz",
+      taskTitle: "Permissions to take Angela to lunch",
+      description: "Checking in with Angela to see her well-being",
+      comments: "Test",
+      dateCreated: "2018-12-12",
+      taskCreatedByUserId: "1",
+      taskCreatedByUserName: "Beatriz",
+      documentIds: []
+    }
+
   };
   componentWillMount(){
 	  var TasksList;
@@ -111,7 +137,15 @@ class Tasks extends Component {
 	  request.send();
   }
 
+    openModal = idx => {
+      console.log(idx)
+      this.setState({ modal: { open:true, rowIdx: idx}})
+      console.log(this.state.rows[idx])
+    }
 
+    closeModal = event => {
+      this.setState({ modal: { open:false}})
+    }
 
   render() {
     const { classes } = this.props;
@@ -119,17 +153,24 @@ class Tasks extends Component {
       rows, headers
     } = this.state;
     const currentPath = this.props.location.pathname;
+    const modalOpen = this.state.modal.open;
+    const modalRow = this.state.rows[this.state.modal.rowIdx] || this.state.dummyRow;
 
     return (
       <React.Fragment>
         <CssBaseline />
         <Topbar currentPath={currentPath} />
         <div className={classes.root}>
+        <Modal open={modalOpen} onRequestClose={this.closeModal}>
+          <TextArea labelText='Details' disabled value={JSON.stringify(modalRow)}/>
+        </Modal>
+
           <Grid container justify="center">
             <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
             <Link className={classes.link} to={{ pathname: "/tasks/new" }}>
             <Button>Add task</Button>
           </Link>
+          <Button onClick={this.openModal}>Open Modal</Button>
             <DataTable
               rows={rows}
               headers={headers}
@@ -146,8 +187,8 @@ class Tasks extends Component {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rows.map(row => (
-                        <TableRow key={row.id}>
+                      {rows.map((row, idx) => (
+                        <TableRow key={row.id} id={row.id} onClick={this.openModal.bind(null,idx)}>
                           {row.cells.map(cell => (
                             <TableCell key={cell.id}>{cell.value}</TableCell>
                           ))}
