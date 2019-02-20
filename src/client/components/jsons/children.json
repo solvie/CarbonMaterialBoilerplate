@@ -1,0 +1,20 @@
+[
+    {
+        "id" : "1",
+        "fullName" : "Angela Cortez",
+        "dateOfBirth": "12/12/2005",
+        "location": "Shelter A",
+        "dateJoined": "12/12/2018",
+        "assignedLawyerId": "1",
+        "assignedLawyerName": "Beatriz"
+    },
+    {
+        "id" : "2",
+        "fullName" : "Pablo Cortez",
+        "dateOfBirth": "01/05/2009",
+        "location": "Shelter A",
+        "dateJoined": "12/12/2018",
+        "assignedLawyerId": "1",
+        "assignedLawyerName": "Beatriz"
+    }
+]

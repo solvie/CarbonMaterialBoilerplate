@@ -10,7 +10,10 @@ import { Button } from 'carbon-components-react';
 import { Tab } from 'carbon-components-react';
 import { Tabs } from 'carbon-components-react';
 import Topbar from '../common/Topbar';
-import DataTableEE from '../common/DataTableEE';
+import { DataTable } from 'carbon-components-react';
+const {
+  Table, TableHead, TableHeader, TableBody, TableCell, TableContainer, TableRow
+} = DataTable;
 
 const backgroundShape = require('../../images/shape.svg');
 
@@ -39,42 +42,102 @@ const styles = theme => ({
 });
 
 class Main extends Component {
+
   state = {
-    learnMoredialog: false,
-    getStartedDialog: false
+    rows : [ //initialize with examples
+      {
+        id: 'acor1',
+        name: 'Angela Cortez',
+        assigned: 'Beatriz',
+        tasks: '3',
+        status: 'NEW'
+      },
+      {
+        id: 'pacor1',
+        name: 'Pablo Cortez',
+        assigned: 'Beatriz',
+        tasks: '2',
+        status: 'ADOPTION ONGOING'
+      }
+    ],
+
+    headers : [
+      {
+        key: 'name',
+        header: 'Full Name',
+      },
+      {
+        key: 'assigned',
+        header: 'Assigned',
+      },
+      {
+        key: 'tasks',
+        header: 'Tasks',
+      },
+      {
+        key: 'status',
+        header: 'Status',
+      }
+    ]
   };
 
-  componentDidMount() {}
 
-  openDialog = (event) => {
-    this.setState({ learnMoredialog: true });
+  updateValues() {
+    this.setState({
+      //fetch values from backend
+    });
   }
 
-  dialogClose = (event) => {
-    this.setState({ learnMoredialog: false });
-  }
-
-  openGetStartedDialog = (event) => {
-    this.setState({ getStartedDialog: true });
-  }
-
-  closeGetStartedDialog = (event) => {
-    this.setState({ getStartedDialog: false });
+  componentDidMount() {
+    this.updateValues();
   }
 
   render() {
     const { classes } = this.props;
+    const {
+      rows, headers
+    } = this.state;
+    const currentPath = this.props.location.pathname;
+
     return (
       <React.Fragment>
         <CssBaseline />
         <Topbar />
+        Welcome Banner
         <Tabs>
           <Tab label="Tab label 1">
             <div className={classes.root}>
               <Grid container justify="center">
                 <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
                   <Grid item>
-                    <DataTableEE />
+                  <DataTable
+                    rows={rows}
+                    headers={headers}
+                    render={({ rows, headers, getHeaderProps }) => (
+                      <TableContainer title="Children Status">
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              {headers.map(header => (
+                                <TableHeader {...getHeaderProps({ header })}>
+                                  {header.header}
+                                </TableHeader>
+                              ))}
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {rows.map(row => (
+                              <TableRow key={row.id}>
+                                {row.cells.map(cell => (
+                                  <TableCell key={cell.id}>{cell.value}</TableCell>
+                                ))}
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    )}
+                    />
                   </Grid>
                 </Grid>
               </Grid>
@@ -87,6 +150,7 @@ class Main extends Component {
       </React.Fragment>
     );
   }
+
 }
 
 export default withRouter(withStyles(styles)(Main));

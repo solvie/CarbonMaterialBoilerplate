@@ -1,0 +1,22 @@
+[
+    {
+        "id": "1",
+        "fullName": "Beatriz",
+        "role":"Lawyer"
+    },
+    {
+        "id": "2",
+        "fullName": "Valentina",
+        "role":"Delegate"
+    },
+    {
+        "id": "3",
+        "fullName": "Hector",
+        "role":"Psychlogist"
+    },
+    {
+        "id": "4",
+        "fullName": "Diego",
+        "role": "Social Worker"
+    }
+]

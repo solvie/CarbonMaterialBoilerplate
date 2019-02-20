@@ -4,19 +4,30 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import Typography from '@material-ui/core/Typography';
 import { Link, withRouter } from 'react-router-dom';
 
+const styles = theme => ({
+  link: {
+    textDecoration: 'none',
+    color: 'inherit'
+  },
+  text: {
+    display: 'inline-block',
+    verticalAlign: 'text-bottom'
+  }
+});
+
 class Back extends Component {
   render() {
     const { classes } = this.props;
     return (
       <div>
         <Typography variant="h6" gutterBottom>
-          <Link className={classes.link} to={{ pathname: '/dashboard' }}>
+          <Link className={classes.link} to={{ pathname: "/tasks" }}>
             <KeyboardArrowLeft />
-            <span className={classes.text}>Back to Dashboard</span>
+            <span className={classes.text}>Back to tasks</span>
           </Link>
         </Typography>
       </div>
-    );
+    )
   }
 }
 

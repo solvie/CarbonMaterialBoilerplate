@@ -97,8 +97,14 @@ class Topbar extends Component {
     if (this.props.currentPath === '/home') {
       return 0;
     }
-    if (this.props.currentPath === '/dashboard') {
+    if (this.props.currentPath === '/children') {
       return 1;
+    }
+    if (this.props.currentPath === '/tasks') {
+      return 2;
+    }
+    if (this.props.currentPath === '/team') {
+      return 3;
     }
   }
 
